@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="https://cdn.tiny.cloud/1/zg3mwraazn1b2ezih16je1tc6z7gwp5yd4pod06ae5uai8pa/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="<?= PUBLIC_DIR ?>/css/style.css">
+    <link rel="stylesheet" href="public/css/style.css">
     <title>FORUM</title>
 </head>
 <body>
@@ -21,31 +21,36 @@
                     <div id="nav-left">
                         <a href="/">Accueil</a>
                         <?php
-                        if(App\Session::isAdmin()){
-                            ?>
-                            <a href="index.php?ctrl=home&action=users">Voir la liste des gens</a>
+                         if(App\Session::isAdmin()){
+                             ?>
+                             <a href="index.php?ctrl=home&action=users">Liste des Utilisateurs</a>
+                             <a href="index.php?ctrl=forum&action=ListCategories">La liste des Catégories</a>
                           
-                            <?php
-                        }
-                        ?>
-                    </div>
-                    <div id="nav-right">
+                             <?php
+                          }
+                         ?>
+                     </div>
+                     <div id="nav-right">
                     <?php
                         
                         if(App\Session::getUser()){
                             ?>
-                            <a href="/security/viewProfile.html"><span class="fas fa-user"></span>&nbsp;<?= App\Session::getUser()?></a>
-                            <a href="/security/logout.html">Déconnexion</a>
+                            <a href="/security/viewProfile.php"><span class="fas fa-user"></span>&nbsp;<?= App\Session::getUser()?></a>
+                            <a href="index.php?ctrl=security&action=logout">profile</a>
+                            <a href="index.php?ctrl=security&action=logout">Déconnexion</a>
+                            <a href="index.php?ctrl=home&action=Home">Home</a>
+                            <a href="index.php?ctrl=forum&action=ListCategories">Liste des Catégories</a>
                             <?php
                         }
                         else{
                             ?>
-                            <a href="./view/security/login.php">Connexion</a>
-                            <a href="/security/register.html">Inscription</a>
-                            <a href="index.php?ctrl=forum&action=listTopics">la liste des topics</a>
+                            <a href="index.php?ctrl=security&action=toLogin">Connexion</a>
+                            <a href="index.php?ctrl=security&action=toRegister">Inscription</a>
+                            <a href="index.php?ctrl=home&action=Home">Home</a>
+                            <a href="index.php?ctrl=forum&action=ListCategories">Liste des Catégories</a>
                         <?php
                         }
-                   
+                    
                         
                     ?>
                     </div>
