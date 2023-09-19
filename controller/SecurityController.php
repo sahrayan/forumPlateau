@@ -56,7 +56,8 @@
                     $user = $userManager->add([
                         "pseudo" => $pseudo,
                         "email"=>$email, 
-                        "password"=> $hashedPassword
+                        "password"=> $hashedPassword,
+                        "role"=> json_encode(["ROLE_USER"]),
                         
                     ]);
                                        
