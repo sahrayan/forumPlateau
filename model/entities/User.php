@@ -108,22 +108,34 @@
         /**
          * Get the value of role
          */ 
-        public function getRole()
-        {
-                return $this->role;
-        }
+	public function getRole()
+	{
+		return json_decode($this->role);
+	}
 
-        /**
-         * Set the value of role
-         *
-         * @return  self
-         */ 
-        public function setRole($role)
-        {
-                $this->role = $role;
+ 
 
-                return $this;
-        }
+	/**
+	 * Set the value of role
+	 *
+	 * @return  self
+	 */
+	public function setRole($role)
+	{
+		$this->role = json_encode($role);
+
+ 
+
+		return $this;
+	}
+
+ 
+
+	public function hasRole($role)
+	{
+		$result = $this->getRole() == json_encode($role);
+		return $result;
+	}
 
         /**
          * Get the value of email
@@ -145,13 +157,7 @@
                 return $this;
         }
 
-        public function hasRole($role) {
-                if ( $role == $this->role)
-                 return true ;
-                else
-                return false;
-        
-    }
+
 
     public function getBan()
         {
