@@ -6,10 +6,11 @@
     final class Topic extends Entity{
 
         private $id;
-        private $title;
+        private $topicName;
+        private $topicDate;
         private $user;
-        private $creationdate;
-        private $closed;
+        private $category;
+        private $locked;
 
         public function __construct($data){         
             $this->hydrate($data);        
@@ -36,25 +37,29 @@
         }
 
         /**
-         * Get the value of title
+         * Get the value of topicName
          */ 
-        public function getTitle()
+        public function getTopicName()
         {
-                return $this->title;
+                return $this->topicName;
         }
 
         /**
-         * Set the value of title
+         * Set the value of topicName
          *
          * @return  self
          */ 
-        public function setTitle($title)
+        public function setTopicName($topicName)
         {
-                $this->title = $title;
+                $this->topicName = $topicName;
 
                 return $this;
         }
-
+        
+        public function __toString()
+        {
+                return $this->topicName;
+        }
         /**
          * Get the value of user
          */ 
@@ -75,32 +80,53 @@
                 return $this;
         }
 
-        public function getCreationdate(){
-            $formattedDate = $this->creationdate->format("d/m/Y, H:i:s");
+
+          /**
+         * Get the value of category
+         */ 
+        public function getCategory()
+        {
+                return $this->category;
+        }
+
+        /**
+         * Set the value of category
+         *
+         * @return  self
+         */ 
+        public function setCategory($category)
+        {
+                $this->category = $category;
+
+                return $this;
+        }
+
+        public function getTopicDate(){
+            $formattedDate = $this->topicDate->format("d/m/Y, H:i:s");
             return $formattedDate;
         }
 
-        public function setCreationdate($date){
-            $this->creationdate = new \DateTime($date);
+        public function setTopicDate($topicDate){
+            $this->topicDate = new \DateTime($topicDate);
             return $this;
         }
 
         /**
-         * Get the value of closed
+         * Get the value of locked
          */ 
-        public function getClosed()
+        public function getLocked()
         {
-                return $this->closed;
+                return $this->locked;
         }
 
         /**
-         * Set the value of closed
+         * Set the value of locked
          *
          * @return  self
          */ 
-        public function setClosed($closed)
+        public function setLocked($locked)
         {
-                $this->closed = $closed;
+                $this->locked = $locked;
 
                 return $this;
         }
