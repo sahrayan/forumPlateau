@@ -76,7 +76,7 @@ class ForumController extends AbstractController implements ControllerInterface
     public function addCategory()
     {
         // Vérifiez si l'utilisateur est connecté et a le rôle d'administrateur
-    if (isset($_SESSION['user']) && $_SESSION['user']->getRole() == 'admin') {
+    if (isset($_SESSION['user']) && $_SESSION['user']->getRole() == ["ROLE_ADMIN"]) {
         $categoryManager = new CategoryManager();
         $categoryName = filter_input(INPUT_POST, "categoryName", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
@@ -102,7 +102,7 @@ class ForumController extends AbstractController implements ControllerInterface
         $userManager = new UserManager();
         
         // Vérifiez si l'utilisateur est connecté
-        if (isset($_SESSION['user']) && isset($_POST['submit']) && !$_SESSION['user']->getRole() == 'admin') {
+        if (isset($_SESSION['user']) && isset($_POST['submit']) && !$_SESSION['user']->getRole() == ["ROLE_ADMIN"]) {
             $idUser = $_SESSION['user']->getId();
             $locked = 0;
             $topicName = filter_input(INPUT_POST, "topicName", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
