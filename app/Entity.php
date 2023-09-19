@@ -1,34 +1,109 @@
 <?php
     namespace App;
 
-    abstract class Entity{
+    abstract class Manager{
 
-        protected function hydrate($data){
+        protected function connect(){
+            DAO::connect();
+        }
 
-            foreach($data as $field => $value){
+        /**
+         * get all the records of a table, sorted by optionnal field and order
+         * 
+         * @param array $order an array with field and order option
+         * @return Collection a collection of objects hydrated by DAO, which are results of the request sent
+         */
+        public function findAll($order = null){
 
-                //field = marque_id
-                //fieldarray = ['marque','id']
-                $fieldArray = explode("_", $field);
+            $orderQuery = ($order) ?                 
+                "ORDER BY ".$order[0]. " ".$order[1] :
+                "";
 
-                if(isset($fieldArray[1]) && $fieldArray[1] == "id"){
-                    $manName = ucfirst($fieldArray[0])."Manager";
-                    $FQCName = "Model\Managers".DS.$manName;
-                    
-                    $man = new $FQCName();
-                    $value = $man->findOneById($value);
-                }
-                //fabrication du nom du setter à appeler (ex: setMarque)
-                $method = "set".ucfirst($fieldArray[0]);
-               
-                if(method_exists($this, $method)){
-                    $this->$method($value);
-                }
+            $sql = "SELECT *
+                    FROM ".$this->tableName." a
+                    ".$orderQuery;
 
+            return $this->getMultipleResults(
+                DAO::select($sql), 
+                $this->className
+            );
+        }
+       
+        public function findOneById($id){
+
+            $sql = "SELECT *
+                    FROM ".$this->tableName." a
+                    WHERE a.id_".$this->tableName." = :id
+                    ";
+
+            return $this->getOneOrNullResult(
+                DAO::select($sql, ['id' => $id], false), 
+                $this->className
+            );
+        }
+
+        //$data = ['username' => 'Squalli', 'password' => 'dfsyfshfbzeifbqefbq', 'email' => 'sql@gmail.com'];
+
+        public function add($data){
+            //$keys = ['username' , 'password', 'email']
+            $keys = array_keys($data);
+            //$values = ['Squalli', 'dfsyfshfbzeifbqefbq', 'sql@gmail.com']
+            $values = array_values($data);
+            //"username,password,email"
+            $sql = "INSERT INTO ".$this->tableName."
+                    (".implode(',', $keys).") 
+                    VALUES
+                    ('".implode("','",$values)."')";
+                    //"'Squalli', 'dfsyfshfbzeifbqefbq', 'sql@gmail.com'"
+            /*
+                INSERT INTO user (username,password,email) VALUES ('Squalli', 'dfsyfshfbzeifbqefbq', 'sql@gmail.com') 
+            */
+            try{
+                return DAO::insert($sql);
+            }
+            catch(\PDOException $e){
+                echo $e->getMessage();
+                die();
             }
         }
+        
+        public function delete($id){
+            $sql = "DELETE FROM ".$this->tableName."
+                    WHERE id_".$this->tableName." = :id
+                    ";
 
-        public function getClass(){
-            return get_class($this);
+            return DAO::delete($sql, ['id' => $id]); 
         }
+
+        private function generate($rows, $class){
+            foreach($rows as $row){
+                yield new $class($row);
+            }
+        }
+        
+        protected function getMultipleResults($rows, $class){
+
+            if(is_iterable($rows)){
+                return $this->generate($rows, $class);
+            }
+            else return null;
+        }
+
+        protected function getOneOrNullResult($row, $class){
+
+            if($row != null){
+                return new $class($row);
+            }
+            return false;
+        }
+
+        protected function getSingleScalarResult($row){
+
+            if($row != null){
+                $value = array_values($row);
+                return $value[0];
+            }
+            return false;
+        }
+    
     }
