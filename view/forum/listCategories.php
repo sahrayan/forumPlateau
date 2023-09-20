@@ -1,6 +1,7 @@
 <?php
 $categories=$result["data"]["categories"];
 ?>
+<link rel="stylesheet" href="public/css/listCategories.css">
 <h1>Catégories</h1>
 <?php
 
