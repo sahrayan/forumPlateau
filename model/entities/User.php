@@ -164,6 +164,26 @@
                 // la logique
                 return $this->ban;
         }
+        // Dans la classe Model\Entities\User
+
+        public function updatePassword($newPassword)
+        {
+                // Vous devez sécuriser le mot de passe ici (hachage, salage, etc.)
+                // Par exemple, vous pouvez utiliser password_hash pour hacher le nouveau mot de passe.
+                $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
+                // Enregistrez le nouveau mot de passe dans la base de données ou dans votre système de stockage de données.
+                // Par exemple, si vous utilisez une classe UserManager, vous pouvez appeler sa méthode pour mettre à jour le mot de passe.
+                $userManager = new UserManager();
+                $userManager->updatePassword($this->id, $hashedPassword);
+
+                // Vous pouvez également mettre à jour la propriété $password de l'objet User si nécessaire.
+                $this->password = $hashedPassword;
+    
+                // Vous pouvez renvoyer un message de succès ou une indication que le mot de passe a été mis à jour avec succès.
+        return "Mot de passe mis à jour avec succès";
+}
+
 
     
     
