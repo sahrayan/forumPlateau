@@ -76,7 +76,7 @@ class ForumController extends AbstractController implements ControllerInterface
     public function addCategory()
     {
         // Vérifiez si l'utilisateur est connecté et a le rôle d'administrateur
-    if (isset($_SESSION['user']) && $_SESSION['user']->getRole() == ["ROLE_ADMIN"]) {
+    if (isset($_SESSION['user']) && $_SESSION['user']->getRole() == "ROLE_ADMIN") {
         $categoryManager = new CategoryManager();
         $categoryName = filter_input(INPUT_POST, "categoryName", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
@@ -92,18 +92,20 @@ class ForumController extends AbstractController implements ControllerInterface
     }
 
     
+// Méthode pour ajouter un sujet
+public function addTopic($id)
+{
+    $topicManager = new TopicManager();
+    $categoryManager = new CategoryManager();
+    $idcategory = $categoryManager->findOneById($id)->getId();
+    $userManager = new UserManager();
+    
+    // Vérifiez si l'utilisateur est connecté
+    if (isset($_SESSION['user'])) {
+        $idUser = $_SESSION['user']->getId(); // Utilisez $_SESSION['user'] pour obtenir les informations de l'utilisateur
 
-    // Méthode pour ajouter un sujet
-    public function addTopic($id)
-    {
-        $topicManager = new TopicManager();
-        $categoryManager = new CategoryManager();
-        $idcategory = $categoryManager->findOneById($id)->getId();
-        $userManager = new UserManager();
-        
-        // Vérifiez si l'utilisateur est connecté
-        if (isset($_SESSION['user']) && isset($_POST['submit']) && !$_SESSION['user']->getRole() == ["ROLE_ADMIN"]) {
-            $idUser = $_SESSION['user']->getId();
+        // Vérifiez si l'utilisateur a le rôle "ROLE_ADMIN" ou n'a pas de rôle spécifique
+        if ($_SESSION['user']->getRole() == ["ROLE_ADMIN"] || empty($_SESSION['user']->getRole())) {
             $locked = 0;
             $topicName = filter_input(INPUT_POST, "topicName", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
             
@@ -113,10 +115,15 @@ class ForumController extends AbstractController implements ControllerInterface
                 $this->redirectTo('forum', 'listCategories', $newTopic);
             }
         } else { 
-            $_SESSION["error"] = "Vous êtes Banni ou n'avez pas l'autorisation de créer un sujet";
+            $_SESSION["error"] = "Vous n'avez pas l'autorisation de créer un sujet";
             $this->redirectTo('forum', 'listCategories');
         }
+    } else { 
+        $_SESSION["error"] = "Vous devez vous connecter pour ajouter un message";
+        $this->redirectTo('forum', 'listCategories');
     }
+}
+
     
 
 // Méthode pour ajouter un message
@@ -132,7 +139,7 @@ public function addPost($id)
         $postContent = filter_input(INPUT_POST, "text", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         
         // Vérifiez si l'utilisateur est banni
-        if ($_SESSION['user']->getBan() == 0 || $_SESSION['user']->getRole() == 'admin') {
+        if ($_SESSION['user']->getBan() == 0 || $_SESSION['user']->getRole() == "ROLE_ADMIN") {
             if ($postContent) {
                 $newPost = $postManager->add(["text" => $postContent, "topic_id" => $idTopic, "user_id" => $idUser]);
                 $this->redirectTo('forum', 'listCategories', $newPost);
@@ -157,7 +164,7 @@ public function addPost($id)
         $user = $_SESSION['user']->getPseudo();
         
         // Vérifiez si l'utilisateur est l'auteur du sujet ou un administrateur
-        if ($pseudo == $user || $_SESSION['user']->getRole() == 'admin') {
+        if ($pseudo == $user || $_SESSION['user']->getRole() == "ROLE_ADMIN") {
             $topicManager->delete($id);
         } else {
             $_SESSION["error"] = "Vous n'êtes pas autorisé";
@@ -176,7 +183,7 @@ public function addPost($id)
         $user = $_SESSION['user']->getPseudo();
         
         // Vérifiez si l'utilisateur est l'auteur du message ou un administrateur
-        if ($pseudo == $user || $_SESSION['user']->getRole() == 'admin') {
+        if ($pseudo == $user || $_SESSION['user']->getRole() == "ROLE_ADMIN") {
             $postManager->delete($id);
         } else {
             $_SESSION["error"] = "Vous n'êtes pas autorisé";
@@ -188,7 +195,7 @@ public function addPost($id)
     public function deleteCategory($id)
     {
         // Vérifiez si l'utilisateur est connecté et a le rôle d'administrateur
-        if (isset($_SESSION['user']) && $_SESSION['user']->getRole() == 'admin') {
+        if (isset($_SESSION['user']) && $_SESSION['user']->getRole() == "ROLE_ADMIN") {
             $categoryManager = new CategoryManager();
             $category = $categoryManager->findOneById($id);
 
