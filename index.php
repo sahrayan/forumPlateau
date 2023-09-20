@@ -63,4 +63,17 @@
         /*j'affiche le template principal (layout)*/
         include VIEW_DIR."layout.php";
     }
+    // Dans votre contrôleur
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $newPassword = filter_input(INPUT_POST, 'newPassword', FILTER_SANITIZE_STRING);
+        // Assurez-vous de valider le nouveau mot de passe, de gérer les erreurs, etc.
+    
+        $user = $_SESSION['user'];
+        $message = $user->updatePassword($newPassword);
+    
+        // Affichez un message de succès ou d'erreur à l'utilisateur.
+        echo $message;
+    }
+
     
